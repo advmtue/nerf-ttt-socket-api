@@ -1,0 +1,40 @@
+{
+  "name": "socket-api",
+  "version": "1.0.0",
+  "description": "Websocket API for Nerf TTT",
+  "main": "build/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rimraf ./build && tsc",
+    "start:dev": "nodemon",
+    "start": "npm run build && NODE_ENV=production node build/index.js",
+    "clean": "rimraf ./build",
+    "lint": "eslint ./src --ext .ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/advmtue/nerf-ttt-socket-api.git"
+  },
+  "keywords": [
+    "Nerf",
+    "TTT"
+  ],
+  "author": "Adam Tuechler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/advmtue/nerf-ttt-socket-api/issues"
+  },
+  "homepage": "https://github.com/advmtue/nerf-ttt-socket-api#readme",
+  "devDependencies": {
+    "@types/node": "^14.11.1",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
+    "@typescript-eslint/parser": "^4.1.1",
+    "eslint": "^7.9.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.4",
+    "rimraf": "^3.0.2",
+    "ts-node": "^9.0.0"
+  }
+}
