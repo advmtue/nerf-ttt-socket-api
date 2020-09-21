@@ -83,4 +83,13 @@ export default class SocketHandler {
 
     this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyClose', payload);
   }
+
+  public lobbyLaunch(lobbyCode: string, gameId: string): void {
+    const payload: SocketMessage = {
+      scopeId: lobbyCode,
+      payload: gameId,
+    };
+
+    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyLaunch', payload);
+  }
 }

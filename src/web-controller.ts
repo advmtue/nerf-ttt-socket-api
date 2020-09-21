@@ -17,6 +17,7 @@ export default class WebController {
     this._app.post('/lobby/:lobbyId/playerleave', this._onLobbyPlayerLeave.bind(this));
     this._app.post('/lobby/:lobbyId/playerready', this._onLobbyPlayerReady.bind(this));
     this._app.post('/lobby/:lobbyId/playerunready', this._onLobbyPlayerUnready.bind(this));
+    this._app.post('/lobby/:lobbyId/launched', this._onLobbyLaunch.bind(this));
     this._app.delete('/lobby/:lobbyId', this._onLobbyClose.bind(this));
   }
 
@@ -51,6 +52,13 @@ export default class WebController {
   private _onLobbyClose(request: express.Request, response: express.Response) {
     console.log('[WEB] Got lobby close request :', request.params.lobbyId);
     this._io.lobbyClose(request.params.lobbyId);
+
+    response.sendStatus(200);
+  }
+
+  private _onLobbyLaunch(request: express.Request, response: express.Response) {
+    console.log(`[WEB] Got lobby launch request :${request.params.lobbyId}`);
+    this._io.lobbyLaunch(request.params.lobbyId, request.body.gameId);
 
     response.sendStatus(200);
   }
