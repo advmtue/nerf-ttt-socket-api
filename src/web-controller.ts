@@ -1,5 +1,3 @@
-import { isExpressionStatement } from 'typescript';
-
 import express from 'express';
 import SocketHandler from './socket-handler';
 
@@ -19,6 +17,7 @@ export default class WebController {
     this._app.post('/lobby/:lobbyId/playerleave', this._onLobbyPlayerLeave.bind(this));
     this._app.post('/lobby/:lobbyId/playerready', this._onLobbyPlayerReady.bind(this));
     this._app.post('/lobby/:lobbyId/playerunready', this._onLobbyPlayerUnready.bind(this));
+    this._app.delete('/lobby/:lobbyId', this._onLobbyClose.bind(this));
   }
 
   private _onLobbyPlayerJoin(request: express.Request, response: express.Response) {
@@ -45,6 +44,13 @@ export default class WebController {
   private _onLobbyPlayerUnready(request: express.Request, response: express.Response) {
     console.log('[WEB] Got lobby player unready data');
     this._io.lobbyPlayerUnready(request.params.lobbyId, request.body.playerId);
+
+    response.sendStatus(200);
+  }
+
+  private _onLobbyClose(request: express.Request, response: express.Response) {
+    console.log('[WEB] Got lobby close request :', request.params.lobbyId);
+    this._io.lobbyClose(request.params.lobbyId);
 
     response.sendStatus(200);
   }

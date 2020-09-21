@@ -33,6 +33,10 @@ export default class SocketHandler {
     socket.on('leaveGame', gameId => {
       console.log(`[SOCKET] Socket left game :${gameId}`);
     });
+
+    socket.on('disconnect', () => {
+      console.log('[SOCKET] A socket disconnected');
+    });
   }
 
   public lobbyPlayerJoin(lobbyCode: string, playerInfo: string): void {
@@ -69,5 +73,14 @@ export default class SocketHandler {
     };
 
     this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyPlayerUnready', payload);
+  }
+
+  public lobbyClose(lobbyCode: string): void {
+    const payload: SocketMessage = {
+      scopeId: lobbyCode,
+      payload: 'close',
+    };
+
+    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyClose', payload);
   }
 }
