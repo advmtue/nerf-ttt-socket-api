@@ -16,22 +16,14 @@ export default class SocketHandler {
   private _registerRoutes(socket: SocketIO.Socket): void {
     console.log('[SOCKET] Caught new socket connection');
 
-    socket.on('joinLobby', (data: {lobbyId: string}) => {
-      console.log(`[SOCKET] Socket joined lobby :${data.lobbyId}`);
-      socket.join(`LOBBY#${data.lobbyId}`);
+    socket.on('joinGame', (data: {gameId: string}) => {
+      console.log(`[SOCKET] Socket joined game :${data.gameId}`);
+      socket.join(`GAME#${data.gameId}`);
     });
 
-    socket.on('leaveLobby', (data: {lobbyId: string}) => {
-      console.log(`[SOCKET] Socket left lobby :${data.lobbyId}`);
-      socket.leave(`LOBBY#${data.lobbyId}`);
-    });
-
-    socket.on('joinGame', gameId => {
-      console.log(`[SOCKET] Socket joined game :${gameId}`);
-    });
-
-    socket.on('leaveGame', gameId => {
-      console.log(`[SOCKET] Socket left game :${gameId}`);
+    socket.on('leaveGame', (data: {gameId: string}) => {
+      console.log(`[SOCKET] Socket left game :${data.gameId}`);
+      socket.leave(`GAME#${data.gameId}`);
     });
 
     socket.on('disconnect', () => {
@@ -39,57 +31,75 @@ export default class SocketHandler {
     });
   }
 
-  public lobbyPlayerJoin(lobbyCode: string, playerInfo: string): void {
+  public playerJoin(gameCode: string, playerInfo: string): void {
     const payload: SocketMessage = {
-      scopeId: lobbyCode,
+      scopeId: gameCode,
       payload: playerInfo,
     };
   
-    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyPlayerJoin', payload);
+    this._io.to(`GAME#${gameCode}`).emit('gamePlayerJoin', payload);
   }
 
-  public lobbyPlayerLeave(lobbyCode: string, playerInfo: any): void {
+  public playerLeave(gameCode: string, playerInfo: string): void {
     const payload: SocketMessage = {
-      scopeId: lobbyCode,
+      scopeId: gameCode,
       payload: playerInfo,
     };
 
-    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyPlayerLeave', payload);
+    this._io.to(`GAME#${gameCode}`).emit('gamePlayerLeave', payload);
   }
 
-  public lobbyPlayerReady(lobbyCode: string, playerId: string): void {
+  public playerReady(gameCode: string, playerId: string): void {
     const payload: SocketMessage = {
-      scopeId: lobbyCode,
+      scopeId: gameCode,
       payload: playerId
     };
 
-    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyPlayerReady', payload);
+    this._io.to(`GAME#${gameCode}`).emit('gamePlayerReady', payload);
   }
 
-  public lobbyPlayerUnready(lobbyCode: string, playerId: string): void {
+  public playerUnready(gameCode: string, playerId: string): void {
     const payload: SocketMessage = {
-      scopeId: lobbyCode,
+      scopeId: gameCode,
       payload: playerId
     };
 
-    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyPlayerUnready', payload);
+    this._io.to(`GAME#${gameCode}`).emit('gamePlayerUnready', payload);
   }
 
-  public lobbyClose(lobbyCode: string): void {
+  public gameClose(gameCode: string): void {
     const payload: SocketMessage = {
-      scopeId: lobbyCode,
+      scopeId: gameCode,
       payload: 'close',
     };
 
-    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyClose', payload);
+    this._io.to(`GAME#${gameCode}`).emit('gameClose', payload);
   }
 
-  public lobbyLaunch(lobbyCode: string, gameId: string): void {
+  public gameLaunch(gameCode: string, gameId: string): void {
     const payload: SocketMessage = {
-      scopeId: lobbyCode,
+      scopeId: gameCode,
       payload: gameId,
     };
 
-    this._io.to(`LOBBY#${lobbyCode}`).emit('lobbyLaunch', payload);
+    this._io.to(`GAME#${gameCode}`).emit('gameLaunch', payload);
+  }
+
+  public gameStart(gameId: string): void {
+    const payload: SocketMessage = {
+      scopeId: gameId,
+      payload: 'start'
+    };
+
+    this._io.to(`GAME#${gameId}`).emit('gameStart', payload);
+  }
+
+  public gameEnd(gameId: string): void {
+    const payload: SocketMessage = {
+      scopeId: gameId,
+      payload: 'end'
+    };
+
+    this._io.to(`GAME#${gameId}`).emit('gameEnd', payload);
   }
 }

@@ -13,52 +13,70 @@ export default class WebController {
   }
 
   private _createRoutes() {
-    this._app.post('/lobby/:lobbyId/playerjoin', this._onLobbyPlayerJoin.bind(this));
-    this._app.post('/lobby/:lobbyId/playerleave', this._onLobbyPlayerLeave.bind(this));
-    this._app.post('/lobby/:lobbyId/playerready', this._onLobbyPlayerReady.bind(this));
-    this._app.post('/lobby/:lobbyId/playerunready', this._onLobbyPlayerUnready.bind(this));
-    this._app.post('/lobby/:lobbyId/launched', this._onLobbyLaunch.bind(this));
-    this._app.delete('/lobby/:lobbyId', this._onLobbyClose.bind(this));
+    this._app.post('/game/:gameId/playerjoin', this._onPlayerJoin.bind(this));
+    this._app.post('/game/:gameId/playerleave', this._onPlayerLeave.bind(this));
+    this._app.post('/game/:gameId/playerready', this._onPlayerReady.bind(this));
+    this._app.post('/game/:gameId/playerunready', this._onPlayerUnready.bind(this));
+    this._app.post('/game/:gameId/launched', this._onLaunch.bind(this));
+
+    // Game
+    this._app.post('/game/:gameId/started', this._onStart.bind(this));
+    this._app.post('/game/:gameId/ended', this._onEnd.bind(this));
+    this._app.delete('/game/:gameId', this._onClose.bind(this));
   }
 
-  private _onLobbyPlayerJoin(request: express.Request, response: express.Response) {
-    console.log('[WEB] Got lobby player join data', request.params.lobbyId);
-    this._io.lobbyPlayerJoin(request.params.lobbyId, request.body);
+  private _onPlayerJoin(request: express.Request, response: express.Response) {
+    console.log('[WEB] Got game player join data', request.params.gameId);
+    this._io.playerJoin(request.params.gameId, request.body);
 
     response.sendStatus(200);
   }
 
-  private _onLobbyPlayerLeave(request: express.Request, response: express.Response) {
-    console.log('[WEB] Got lobby player leave data');
-    this._io.lobbyPlayerLeave(request.params.lobbyId, request.body.playerId);
+  private _onPlayerLeave(request: express.Request, response: express.Response) {
+    console.log('[WEB] Got game player leave data');
+    this._io.playerLeave(request.params.gameId, request.body.playerId);
 
     response.sendStatus(200);
   }
 
-  private _onLobbyPlayerReady(request: express.Request, response: express.Response) {
-    console.log('[WEB] Got lobby player ready data');
-    this._io.lobbyPlayerReady(request.params.lobbyId, request.body.playerId);
+  private _onPlayerReady(request: express.Request, response: express.Response) {
+    console.log('[WEB] Got game player ready data');
+    this._io.playerReady(request.params.gameId, request.body.playerId);
 
     response.sendStatus(200);
   }
 
-  private _onLobbyPlayerUnready(request: express.Request, response: express.Response) {
-    console.log('[WEB] Got lobby player unready data');
-    this._io.lobbyPlayerUnready(request.params.lobbyId, request.body.playerId);
+  private _onPlayerUnready(request: express.Request, response: express.Response) {
+    console.log('[WEB] Got game player unready data');
+    this._io.playerUnready(request.params.gameId, request.body.playerId);
 
     response.sendStatus(200);
   }
 
-  private _onLobbyClose(request: express.Request, response: express.Response) {
-    console.log('[WEB] Got lobby close request :', request.params.lobbyId);
-    this._io.lobbyClose(request.params.lobbyId);
+  private _onClose(request: express.Request, response: express.Response) {
+    console.log('[WEB] Got game close request :', request.params.gameId);
+    this._io.gameClose(request.params.gameId);
 
     response.sendStatus(200);
   }
 
-  private _onLobbyLaunch(request: express.Request, response: express.Response) {
-    console.log(`[WEB] Got lobby launch request :${request.params.lobbyId}`);
-    this._io.lobbyLaunch(request.params.lobbyId, request.body.gameId);
+  private _onLaunch(request: express.Request, response: express.Response) {
+    console.log(`[WEB] Got game launch request :${request.params.gameId}`);
+    this._io.gameLaunch(request.params.gameId, request.body.gameId);
+
+    response.sendStatus(200);
+  }
+
+  private _onStart(request: express.Request, response: express.Response) {
+    console.log(`[WEB] Got game start request :${request.params.gameId}`);
+    this._io.gameStart(request.params.gameId);
+
+    response.sendStatus(200);
+  }
+
+  private _onEnd(request: express.Request, response: express.Response) {
+    console.log(`[WEB] Got game end request :${request.params.gameId}`);
+    this._io.gameEnd(request.params.gameId);
 
     response.sendStatus(200);
   }
