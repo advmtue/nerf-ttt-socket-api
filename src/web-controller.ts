@@ -20,9 +20,12 @@ export default class WebController {
     this._app.post('/game/:gameId/launched', this._onLaunch.bind(this));
 
     // Game
+    this._app.post('/game/:gameId/confirmkills', this._onConfirmKillList.bind(this));
     this._app.post('/game/:gameId/started', this._onStart.bind(this));
     this._app.post('/game/:gameId/ended', this._onEnd.bind(this));
     this._app.delete('/game/:gameId', this._onClose.bind(this));
+
+    this._app.post('/game/:gameId/confirmKill/:playerId', this._playerConfirmKill.bind(this));
   }
 
   private _onPlayerJoin(request: express.Request, response: express.Response) {
@@ -77,6 +80,20 @@ export default class WebController {
   private _onEnd(request: express.Request, response: express.Response) {
     console.log(`[WEB] Got game end request :${request.params.gameId}`);
     this._io.gameEnd(request.params.gameId);
+
+    response.sendStatus(200);
+  }
+
+  private _onConfirmKillList(request: express.Request, response: express.Response) {
+    console.log(`[WEB] Got game confirm kills request :${request.params.gameId}`);
+    this._io.confirmKills(request.params.gameId, request.body);
+
+    response.sendStatus(200);
+  }
+
+  private _playerConfirmKill(request: express.Request, response: express.Response) {
+    console.log(`[WEB] Got player confirm kill request :${request.params.gameId}::${request.params.playerId}`);
+    this._io.playerConfirmKill(request.params.gameId, request.params.playerId);
 
     response.sendStatus(200);
   }

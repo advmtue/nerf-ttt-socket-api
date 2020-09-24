@@ -3,7 +3,7 @@ import SocketMessage from './types/SocketMessage';
 export default class SocketHandler {
   private _io: SocketIO.Server;
 
-  constructor (io: SocketIO.Server) {
+  constructor(io: SocketIO.Server) {
     this._io = io;
 
     this._catchConnections();
@@ -16,12 +16,12 @@ export default class SocketHandler {
   private _registerRoutes(socket: SocketIO.Socket): void {
     console.log('[SOCKET] Caught new socket connection');
 
-    socket.on('joinGame', (data: {gameId: string}) => {
+    socket.on('joinGame', (data: { gameId: string }) => {
       console.log(`[SOCKET] Socket joined game :${data.gameId}`);
       socket.join(`GAME#${data.gameId}`);
     });
 
-    socket.on('leaveGame', (data: {gameId: string}) => {
+    socket.on('leaveGame', (data: { gameId: string }) => {
       console.log(`[SOCKET] Socket left game :${data.gameId}`);
       socket.leave(`GAME#${data.gameId}`);
     });
@@ -36,7 +36,7 @@ export default class SocketHandler {
       scopeId: gameCode,
       payload: playerInfo,
     };
-  
+
     this._io.to(`GAME#${gameCode}`).emit('gamePlayerJoin', payload);
   }
 
@@ -101,5 +101,23 @@ export default class SocketHandler {
     };
 
     this._io.to(`GAME#${gameId}`).emit('gameEnd', payload);
+  }
+
+  public confirmKills(gameId: string, toConfirm: any): void {
+    const payload: SocketMessage = {
+      scopeId: gameId,
+      payload: toConfirm
+    };
+
+    this._io.to(`GAME#${gameId}`).emit('confirmKills', payload);
+  }
+
+  public playerConfirmKill(gameId: string, victimId: string): void {
+    const payload: SocketMessage = {
+      scopeId: gameId,
+      payload: victimId
+    };
+
+    this._io.to(`GAME#${gameId}`).emit('playerConfirmKill', payload);
   }
 }
