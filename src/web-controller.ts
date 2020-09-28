@@ -79,7 +79,7 @@ export default class WebController {
 
   private _onEnd(request: express.Request, response: express.Response) {
     console.log(`[WEB] Got game end request :${request.params.gameId}`);
-    this._io.gameEnd(request.params.gameId);
+    this._io.gameEnd(request.params.gameId, request.body);
 
     response.sendStatus(200);
   }

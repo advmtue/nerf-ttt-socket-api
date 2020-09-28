@@ -94,10 +94,10 @@ export default class SocketHandler {
     this._io.to(`GAME#${gameId}`).emit('gameStart', payload);
   }
 
-  public gameEnd(gameId: string): void {
+  public gameEnd(gameId: string, endGameInfo: any): void {
     const payload: SocketMessage = {
       scopeId: gameId,
-      payload: 'end'
+      payload: endGameInfo
     };
 
     this._io.to(`GAME#${gameId}`).emit('gameEnd', payload);
