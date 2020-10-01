@@ -25,7 +25,7 @@ export default class WebController {
     this._app.post('/game/:gameId/ended', this._onEnd.bind(this));
     this._app.delete('/game/:gameId', this._onClose.bind(this));
 
-    this._app.post('/game/:gameId/confirmKill/:playerId', this._playerConfirmKill.bind(this));
+    this._app.get('/game/:gameId/confirmKill/:playerId', this._playerConfirmKill.bind(this));
   }
 
   private _onPlayerJoin(request: express.Request, response: express.Response) {
@@ -72,7 +72,7 @@ export default class WebController {
 
   private _onStart(request: express.Request, response: express.Response) {
     console.log(`[WEB] Got game start request :${request.params.gameId}`);
-    this._io.gameStart(request.params.gameId);
+    this._io.gameStart(request.params.gameId, request.body.startTime);
 
     response.sendStatus(200);
   }

@@ -85,16 +85,17 @@ export default class SocketHandler {
     this._io.to(`GAME#${gameCode}`).emit('gameLaunch', payload);
   }
 
-  public gameStart(gameId: string): void {
+  public gameStart(gameId: string, startTime: string): void {
     const payload: SocketMessage = {
       scopeId: gameId,
-      payload: 'start'
+      payload: startTime,
     };
 
     this._io.to(`GAME#${gameId}`).emit('gameStart', payload);
   }
 
   public gameEnd(gameId: string, endGameInfo: any): void {
+    console.log(endGameInfo);
     const payload: SocketMessage = {
       scopeId: gameId,
       payload: endGameInfo
