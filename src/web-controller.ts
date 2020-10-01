@@ -9,22 +9,40 @@ export default class WebController {
     this._app = app;
     this._io = socketHandler;
 
+    // Assign routes to the express application
     this._createRoutes();
   }
 
   private _createRoutes() {
+    // Player joins a game
     this._app.post('/game/:gameId/playerjoin', this._onPlayerJoin.bind(this));
+
+    // Player leaves a game
     this._app.post('/game/:gameId/playerleave', this._onPlayerLeave.bind(this));
+
+    // Player sets their status in game to ready
     this._app.post('/game/:gameId/playerready', this._onPlayerReady.bind(this));
+
+    // Player sets their status in game to unready
     this._app.post('/game/:gameId/playerunready', this._onPlayerUnready.bind(this));
+
+    // Game launches (LOBBY -> PREGAME)
     this._app.post('/game/:gameId/launched', this._onLaunch.bind(this));
 
-    // Game
-    this._app.post('/game/:gameId/confirmkills', this._onConfirmKillList.bind(this));
+    // Game starts (PREGAME -> INGAME)
     this._app.post('/game/:gameId/started', this._onStart.bind(this));
+
+    // Game ends ({INGAME,POSTPENDING} -> POSTGAME)
     this._app.post('/game/:gameId/ended', this._onEnd.bind(this));
+
+    // Game begins waiting for players to confirm their kills
+    // Phase: (INGAME -> POSTPENDING)
+    this._app.post('/game/:gameId/confirmkills', this._onPostPending.bind(this));
+
+    // Game closes unexpectedly. Could be from admin/gameowner or otherwise.
     this._app.delete('/game/:gameId', this._onClose.bind(this));
 
+    // Player confirms their killer in the postpending phase
     this._app.get('/game/:gameId/confirmKill/:playerId', this._playerConfirmKill.bind(this));
   }
 
@@ -65,7 +83,7 @@ export default class WebController {
 
   private _onLaunch(request: express.Request, response: express.Response) {
     console.log(`[WEB] Got game launch request :${request.params.gameId}`);
-    this._io.gameLaunch(request.params.gameId, request.body.gameId);
+    this._io.gameLaunch(request.params.gameId);
 
     response.sendStatus(200);
   }
@@ -84,7 +102,7 @@ export default class WebController {
     response.sendStatus(200);
   }
 
-  private _onConfirmKillList(request: express.Request, response: express.Response) {
+  private _onPostPending(request: express.Request, response: express.Response) {
     console.log(`[WEB] Got game confirm kills request :${request.params.gameId}`);
     this._io.confirmKills(request.params.gameId, request.body);
 
